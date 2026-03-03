@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\CategoriesDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -11,10 +12,9 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index(): View
+    public function index(CategoriesDataTable $dataTable)
     {
-        $categories = Category::withCount('flowers')->latest()->paginate(15);
-        return view('admin.categories.index', compact('categories'));
+        return $dataTable->render('admin.categories.index');
     }
 
     public function create(): View
