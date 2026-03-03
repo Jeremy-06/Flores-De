@@ -78,8 +78,9 @@ class CheckoutController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Checkout error: ' . $e->getMessage());
             return redirect()->back()
-                ->with('error', 'Something went wrong. Please try again.');
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
 }
