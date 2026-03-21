@@ -52,6 +52,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('categories', CategoryController::class);
     Route::resource('flowers', FlowerController::class);
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+    Route::put('/flowers/{id}/restore', [FlowerController::class, 'restore'])->name('flowers.restore');
 });
 
 require __DIR__.'/auth.php';

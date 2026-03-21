@@ -87,6 +87,14 @@ class FlowerController extends Controller
         $flower->delete();
 
         return redirect()->route('admin.flowers.index')
-            ->with('success', 'Flower deleted!');
+            ->with('success', 'Flower deleted successfully.');
+    }
+
+    public function restore($id)
+    {
+        Flower::withTrashed()->findOrFail($id)->restore();
+
+        return redirect()->route('admin.flowers.index')
+            ->with('success', 'Flower restored successfully.');
     }
 }
