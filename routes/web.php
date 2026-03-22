@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FlowerController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,7 +32,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
 });
 
 // Authenticated Routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         if (auth()->user()->isAdmin()) {
             return redirect()->route('admin.dashboard');
@@ -55,6 +56,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('flowers', FlowerController::class);
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     Route::put('/flowers/{id}/restore', [FlowerController::class, 'restore'])->name('flowers.restore');
+    Route::resource('users', AdminUserController::class)->only(['index', 'edit', 'update']);
 });
 
 require __DIR__.'/auth.php';

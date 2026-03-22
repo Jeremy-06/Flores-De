@@ -41,10 +41,34 @@
                         @if(auth()->user()->isAdmin())
                             <a href="{{ route('admin.dashboard') }}" class="text-gray-600 hover:text-red-600">Admin</a>
                         @endif
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="text-gray-600 hover:text-red-600">Logout</button>
-                        </form>
+
+                        <!-- User Profile Dropdown -->
+                        <div x-data="{ open: false }" class="relative">
+                            <button @click="open = !open" class="flex items-center gap-2 text-gray-600 hover:text-red-600 focus:outline-none">
+                                @if(auth()->user()->photo)
+                                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                @else
+                                    <div class="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                                @endif
+                                <span class="text-sm">{{ auth()->user()->name }}</span>
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                            </button>
+
+                            <div x-show="open" @click.away="open = false" x-transition
+                                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                                    My Profile
+                                </a>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     @else
                         <a href="{{ route('login') }}" class="text-gray-600 hover:text-red-600">Login</a>
                         <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-1.5 rounded text-sm hover:bg-red-700">Register</a>

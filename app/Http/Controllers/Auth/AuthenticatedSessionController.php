@@ -25,9 +25,16 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+        $user = Auth::user();
+        // Check if user is active
+        if (!$user->isActive()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Your account has been deactivated.']);
+        }
         $request->session()->regenerate();
-
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
