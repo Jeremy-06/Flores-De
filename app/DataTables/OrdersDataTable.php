@@ -12,23 +12,14 @@ use Yajra\DataTables\Services\DataTable;
 
 class OrdersDataTable extends DataTable
 {
-    /**
-     * Build the DataTable class.
-     *
-     * @param QueryBuilder<Order> $query Results from query() method.
-     */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', function (Order $order) {
-                return '<a href="' . route('admin.orders.show', $order) . '"
-                    class="text-blue-600 hover:underline text-xs font-medium">View</a>';
-            })
             ->addColumn('customer', function (Order $order) {
-                return $order->user->name ?? $order->customer_name ?? 'N/A';
+                return $order->user->name ?? 'N/A';
             })
             ->editColumn('total', function (Order $order) {
-                return '₱' . number_format($order->total, 2);
+                return '₱' . number_format((float) $order->total, 2);
             })
             ->editColumn('status', function (Order $order) {
                 $colors = [
@@ -38,68 +29,56 @@ class OrdersDataTable extends DataTable
                     'cancelled'  => 'bg-red-100 text-red-800',
                 ];
                 $class = $colors[$order->status] ?? 'bg-gray-100 text-gray-800';
-                return '<span class="' . $class . ' text-xs px-2 py-1 rounded">'
+                return '<span class="' . $class . ' text-xs px-2 py-1 rounded-full font-medium">'
                     . ucfirst($order->status) . '</span>';
             })
             ->editColumn('created_at', fn (Order $row) => $row->created_at->format('M d, Y'))
+            ->addColumn('action', function (Order $order) {
+                return '<a href="' . route('admin.orders.show', $order) . '"
+                    class="text-red-600 hover:underline text-sm font-medium">View</a>';
+            })
             ->rawColumns(['action', 'status'])
             ->setRowId('id');
     }
 
-    /**
-     * Get the query source of dataTable.
-     *
-     * @return QueryBuilder<Order>
-     */
     public function query(Order $model): QueryBuilder
     {
-        return $model->newQuery()->with('user');
+        return $model->newQuery()->with('user')->latest();
     }
 
-    /**
-     * Optional method if you want to use the html builder.
-     */
     public function html(): HtmlBuilder
     {
         return $this->builder()
             ->setTableId('orders-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(1)
-            ->selectStyleSingle()
+            ->orderBy(0, 'desc')
             ->buttons([
                 Button::make('excel'),
                 Button::make('csv'),
-                Button::make('pdf'),
                 Button::make('print'),
-                Button::make('reset'),
                 Button::make('reload'),
             ]);
     }
 
-    /**
-     * Get the dataTable columns definition.
-     */
     public function getColumns(): array
     {
         return [
+            Column::make('id')->title('ID')->width(50),
+            Column::make('order_number')->title('Order #'),
+            Column::computed('customer')->title('Customer'),
+            Column::make('total')->title('Total')->width(100),
+            Column::make('status')->title('Status')->width(100),
+            Column::make('created_at')->title('Date')->width(120),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->width(60)
-                ->addClass('text-center'),
-            Column::make('id')->title('#'),
-            Column::make('order_number')->title('Order #'),
-            Column::computed('customer')->title('Customer'),
-            Column::make('total')->title('Total'),
-            Column::make('status')->title('Status'),
-            Column::make('created_at')->title('Date'),
+                ->addClass('text-center')
+                ->title('Action'),
         ];
     }
 
-    /**
-     * Get the filename for export.
-     */
     protected function filename(): string
     {
         return 'Orders_' . date('YmdHis');

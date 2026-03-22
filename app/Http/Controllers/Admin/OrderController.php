@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\DataTables\OrdersDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -11,9 +10,24 @@ use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    public function index(OrdersDataTable $dataTable)
+    public function index(Request $request): View
     {
-        return $dataTable->render('admin.orders.index');
+        $query = Order::with('user')->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->paginate(15)->withQueryString();
+        return view('admin.orders.index', compact('orders'));
     }
 
     public function show(Order $order): View

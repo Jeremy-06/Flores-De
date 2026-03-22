@@ -45,6 +45,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Customer Reviews
+    Route::post('/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
 });
 
 // Admin Routes
@@ -57,6 +61,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     Route::put('/flowers/{id}/restore', [FlowerController::class, 'restore'])->name('flowers.restore');
     Route::resource('users', AdminUserController::class)->only(['index', 'edit', 'update']);
+    Route::get('/reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
+    Route::delete('/reviews/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 require __DIR__.'/auth.php';

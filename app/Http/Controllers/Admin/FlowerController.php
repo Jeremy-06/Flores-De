@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFlowerRequest;
+use App\Http\Requests\UpdateFlowerRequest;
 use App\Models\Category;
 use App\Models\Flower;
 use App\Models\FlowerImage;
@@ -23,18 +25,9 @@ class FlowerController extends Controller
         $categories = Category::all();
         return view('admin.flowers.create', compact('categories'));
     }
-    public function store(Request $request): RedirectResponse
+    public function store(StoreFlowerRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-            'images.*' => 'nullable|image|max:2048',
-            'available' => 'boolean',
-        ]);
+        $validated = $request->validated();
         $slug = Str::slug($validated['name']);
         $count = Flower::withTrashed()->where('slug', 'like', $slug . '%')->count();
         $validated['slug'] = $count ? $slug . '-' . ($count + 1) : $slug;
@@ -60,18 +53,9 @@ class FlowerController extends Controller
         $flower->load('images');
         return view('admin.flowers.edit', compact('flower', 'categories'));
     }
-    public function update(Request $request, Flower $flower): RedirectResponse
+    public function update(UpdateFlowerRequest $request, Flower $flower): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|max:2048',
-            'images.*' => 'nullable|image|max:2048',
-            'available' => 'boolean',
-        ]);
+        $validated = $request->validated();
         $slug = Str::slug($validated['name']);
         $count = Flower::withTrashed()->where('slug', 'like', $slug . '%')->count();
         $validated['slug'] = $count ? $slug . '-' . ($count + 1) : $slug;

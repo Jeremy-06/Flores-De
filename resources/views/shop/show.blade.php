@@ -63,6 +63,58 @@
                     <p class="text-red-600 text-sm font-semibold mb-6">Out of Stock</p>
                 @endif
             </div>
+            <!-- Reviews Section -->
+            <div class="mt-8">
+                <h3 class="text-xl font-bold mb-4">Customer Reviews ({{ $flower->reviews->count() }})</h3>
+                @auth
+                    @php
+                        $hasBought = auth()->user()->orders()->where('status', 'delivered')
+                            ->whereHas('items', fn($q) => $q->where('flower_id', $flower->id))->exists();
+                        $existingReview = $flower->reviews->where('user_id', auth()->id())->first();
+                    @endphp
+                    @if($hasBought && !$existingReview)
+                    <form action="{{ route('reviews.store') }}" method="POST" class="bg-gray-50 rounded p-4 mb-4">
+                        @csrf
+                        <input type="hidden" name="flower_id" value="{{ $flower->id }}">
+                        <div class="mb-2">
+                            <label class="text-sm font-medium">Rating</label>
+                            <select name="rating" class="border rounded px-2 py-1" required>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★</option>
+                                <option value="3">★★★</option>
+                                <option value="2">★★</option>
+                                <option value="1">★</option>
+                            </select>
+                        </div>
+                        <textarea name="comment" rows="2" class="w-full border rounded px-3 py-2 mb-2" placeholder="Write your review..." required></textarea>
+                        @error('comment') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                        <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded text-sm hover:bg-red-700">Post Review</button>
+                    </form>
+                    @elseif($existingReview)
+                    <form action="{{ route('reviews.update', $existingReview) }}" method="POST" class="bg-blue-50 rounded p-4 mb-4">
+                        @csrf @method('PUT')
+                        <p class="text-sm text-blue-600 mb-2">Update your review:</p>
+                        <select name="rating" class="border rounded px-2 py-1 mb-2">
+                            @for($i = 5; $i >= 1; $i--)
+                                <option value="{{ $i }}" {{ $existingReview->rating == $i ? 'selected' : '' }}>{{ str_repeat('★', $i) }}</option>
+                            @endfor
+                        </select>
+                        <textarea name="comment" rows="2" class="w-full border rounded px-3 py-2 mb-2">{{ $existingReview->comment }}</textarea>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700">Update Review</button>
+                    </form>
+                    @endif
+                @endauth
+                @foreach($flower->reviews()->with('user')->latest()->get() as $review)
+                <div class="border-b py-3">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-medium text-sm">{{ $review->user->name }}</span>
+                        <span class="text-yellow-400 text-sm">{{ str_repeat('★', $review->rating) }}</span>
+                        <span class="text-gray-400 text-xs">{{ $review->created_at->diffForHumans() }}</span>
+                    </div>
+                    <p class="text-sm text-gray-700">{{ $review->comment }}</p>
+                </div>
+                @endforeach
+            </div>
         </div>
     </div>
 

@@ -43,4 +43,13 @@ class Flower extends Model
     {
         return $this->hasMany(FlowerImage::class);
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+    public function averageRating(): float
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
 }

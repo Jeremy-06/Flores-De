@@ -13,16 +13,27 @@ class ShopController extends Controller
     {
         $query = Flower::available()->with('category');
 
-        if ($request->has('category')) {
+        // Category filter
+        if ($request->filled('category')) {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
             });
         }
 
-        if ($request->has('search')) {
+        // Price range filter
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Search
+        if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
+        // Sort
         $sort = $request->get('sort', 'latest');
         match ($sort) {
             'price_low' => $query->orderBy('price', 'asc'),
@@ -31,7 +42,7 @@ class ShopController extends Controller
             default => $query->latest(),
         };
 
-        $flowers = $query->paginate(12);
+        $flowers = $query->paginate(12)->withQueryString();
         $categories = Category::all();
 
         return view('shop.index', compact('flowers', 'categories'));
