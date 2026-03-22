@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('categories', CategoryController::class);
+    Route::post('/flowers/import', [FlowerController::class, 'import'])->name('flowers.import');
+    Route::delete('/flower-images/{image}', [FlowerController::class, 'destroyImage'])->name('flowers.destroyImage');
     Route::resource('flowers', FlowerController::class);
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     Route::put('/flowers/{id}/restore', [FlowerController::class, 'restore'])->name('flowers.restore');

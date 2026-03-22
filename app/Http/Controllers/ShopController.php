@@ -41,8 +41,9 @@ class ShopController extends Controller
     {
         $flower = Flower::where('slug', $slug)
             ->available()
-            ->with('category')
+            ->with('category', 'images')  // add 'images' here
             ->firstOrFail();
+
 
         $relatedFlowers = Flower::available()
             ->where('category_id', $flower->category_id)
