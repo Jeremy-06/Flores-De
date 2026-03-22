@@ -68,6 +68,7 @@
                 <h3 class="text-xl font-bold mb-4">Customer Reviews ({{ $flower->reviews->count() }})</h3>
                 @auth
                     @php
+                        /** @var \App\Models\Flower $flower */
                         $hasBought = auth()->user()->orders()->where('status', 'delivered')
                             ->whereHas('items', fn($q) => $q->where('flower_id', $flower->id))->exists();
                         $existingReview = $flower->reviews->where('user_id', auth()->id())->first();
