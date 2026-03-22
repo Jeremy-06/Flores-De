@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Mail\OrderPlaced;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -72,6 +74,10 @@ class CheckoutController extends Controller
             \Cart::clear();
 
             DB::commit();
+
+            // Send order confirmation email with PDF receipt
+            $order->load('items', 'user');
+            Mail::to($order->user->email)->send(new OrderPlaced($order));
 
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Order placed successfully!');

@@ -44,6 +44,11 @@ class OrderController extends Controller
 
         $order->update($validated);
 
+        // Send status update email
+        $order->load('user');
+        \Illuminate\Support\Facades\Mail::to($order->user->email)
+            ->send(new \App\Mail\OrderStatusUpdated($order));
+
         return redirect()->back()->with('success', 'Order status updated!');
     }
 }

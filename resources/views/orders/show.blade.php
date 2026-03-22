@@ -8,14 +8,20 @@
 
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Order {{ $order->order_number }}</h1>
-        <span class="px-2 py-0.5 rounded text-xs font-semibold
-            @if($order->status === 'delivered') bg-green-100 text-green-700
-            @elseif($order->status === 'cancelled') bg-red-100 text-red-700
-            @elseif($order->status === 'processing') bg-blue-100 text-blue-700
-            @else bg-yellow-100 text-yellow-700
-            @endif">
-            {{ ucfirst($order->status) }}
-        </span>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('orders.receipt', $order) }}" class="bg-red-600 text-white px-4 py-1.5 rounded text-sm hover:bg-red-700 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                Download Receipt
+            </a>
+            <span class="px-2 py-0.5 rounded text-xs font-semibold
+                @if($order->status === 'delivered') bg-green-100 text-green-700
+                @elseif($order->status === 'cancelled') bg-red-100 text-red-700
+                @elseif($order->status === 'processing') bg-blue-100 text-blue-700
+                @else bg-yellow-100 text-yellow-700
+                @endif">
+                {{ ucfirst($order->status) }}
+            </span>
+        </div>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6 mb-6">
