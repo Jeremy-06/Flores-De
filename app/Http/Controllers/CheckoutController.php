@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class CheckoutController extends Controller
 {
@@ -33,7 +34,6 @@ class CheckoutController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'delivery_address' => 'required|string',
-            'delivery_date' => 'required|date|after_or_equal:today',
             'message' => 'nullable|string|max:500',
         ]);
 
@@ -45,6 +45,7 @@ class CheckoutController extends Controller
         }
 
         $total = \Cart::getTotal();
+        $estimatedDeliveryDate = Carbon::now()->addDays(5)->toDateString();
 
         DB::beginTransaction();
 
@@ -57,7 +58,7 @@ class CheckoutController extends Controller
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
                 'delivery_address' => $request->delivery_address,
-                'delivery_date' => $request->delivery_date,
+                'delivery_date' => $estimatedDeliveryDate,
                 'message' => $request->message,
             ]);
 

@@ -12,6 +12,7 @@ class OrderController extends Controller
     public function index(): View
     {
         $orders = Order::where('user_id', auth()->id())
+            ->with(['items.flower'])
             ->latest()
             ->paginate(10);
 

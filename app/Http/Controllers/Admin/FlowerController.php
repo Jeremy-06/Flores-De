@@ -15,9 +15,25 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 class FlowerController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $flowers = Flower::withTrashed()->with('category', 'images')->latest()->paginate(15);
+        $flowers = Flower::withTrashed()
+            ->with('category', 'images')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->string('search')->toString();
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('slug', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                            $categoryQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
         return view('admin.flowers.index', compact('flowers'));
     }
     public function create(): View

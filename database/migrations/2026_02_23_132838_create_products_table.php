@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flowers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->integer('stock')->default(0);
-            $table->string('image')->nullable();
-            $table->boolean('available')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('flowers')) {
+            Schema::create('flowers', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('category_id')->constrained()->onDelete('cascade');
+                $table->string('name');
+                $table->string('slug')->unique();
+                $table->text('description');
+                $table->decimal('price', 10, 2);
+                $table->integer('stock')->default(0);
+                $table->string('image')->nullable();
+                $table->boolean('available')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('flowers');
     }
 };

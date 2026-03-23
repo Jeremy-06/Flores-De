@@ -3,39 +3,44 @@
 @section('title', 'My Orders')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">My Orders</h1>
+<div class="fd-container py-4 md:py-8">
+    <h1 class="text-3xl font-bold mb-6" style="font-family: 'Playfair Display', serif;">My Orders</h1>
 
     @if($orders->count() > 0)
-        <div class="bg-white border border-gray-200 rounded overflow-hidden">
-            <table class="w-full text-sm">
+        <div class="fd-panel overflow-hidden">
+            <table class="fd-table">
                 <thead>
-                    <tr class="bg-pink-50 border-b">
-                        <th class="px-4 py-3 text-left text-gray-600">Order Number</th>
-                        <th class="px-4 py-3 text-left text-gray-600">Date</th>
-                        <th class="px-4 py-3 text-left text-gray-600">Status</th>
-                        <th class="px-4 py-3 text-right text-gray-600">Total</th>
-                        <th class="px-4 py-3 text-right text-gray-600"></th>
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="text-right">Total</th>
+                        <th class="text-right"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody>
                     @foreach($orders as $order)
                         <tr>
-                            <td class="px-4 py-3 font-semibold text-gray-800">{{ $order->order_number }}</td>
-                            <td class="px-4 py-3 text-gray-500">{{ $order->created_at->format('M d, Y h:i A') }}</td>
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-0.5 rounded text-xs font-semibold
-                                    @if($order->status === 'delivered') bg-green-100 text-green-700
-                                    @elseif($order->status === 'cancelled') bg-red-100 text-red-700
-                                    @elseif($order->status === 'processing') bg-blue-100 text-blue-700
-                                    @else bg-yellow-100 text-yellow-700
-                                    @endif">
+                            <td class="font-semibold text-slate-800">{{ $order->order_number }}</td>
+                            <td class="text-slate-500">{{ $order->created_at->format('M d, Y h:i A') }}</td>
+                            <td>
+                                <span class="@if($order->status === 'delivered') fd-status-ok @elseif($order->status === 'cancelled') fd-status-danger @elseif($order->status === 'processing') fd-status-info @else fd-status-warn @endif">
                                     {{ ucfirst($order->status) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-right font-bold text-red-600">₱{{ number_format($order->total, 2) }}</td>
-                            <td class="px-4 py-3 text-right">
-                                <a href="{{ route('orders.show', $order) }}" class="text-red-600 hover:underline text-sm">View</a>
+                            <td class="text-right font-bold text-orange-700">₱{{ number_format($order->total, 2) }}</td>
+                            <td class="text-right">
+                                @php
+                                    $reviewItem = $order->items->first(fn($item) => $item->flower);
+                                @endphp
+                                <div class="flex justify-end gap-2 flex-wrap">
+                                    <a href="{{ route('orders.show', $order) }}" class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 whitespace-nowrap">View</a>
+                                    @if($order->status === 'delivered' && $reviewItem)
+                                        <a href="{{ route('shop.show', $reviewItem->flower->slug) }}#customer-reviews" class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 whitespace-nowrap">Proceed to Review</a>
+                                    @elseif($order->status === 'delivered')
+                                        <a href="{{ route('orders.show', $order) }}#review-links" class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 whitespace-nowrap">Proceed to Review</a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -47,9 +52,10 @@
             {{ $orders->links() }}
         </div>
     @else
-        <div class="bg-white border border-gray-200 rounded p-12 text-center max-w-md mx-auto">
-            <p class="text-gray-500 mb-4">No orders yet.</p>
-            <a href="{{ route('shop.index') }}" class="inline-block bg-red-600 text-white px-6 py-2 rounded font-semibold hover:bg-red-700">Start Shopping</a>
+        <div class="fd-panel p-12 text-center max-w-md mx-auto">
+            <svg class="w-16 h-16 mx-auto mb-4 text-orange-200" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+            <p class="text-slate-500 mb-4">No orders yet.</p>
+            <a href="{{ route('shop.index') }}" class="inline-block fd-btn-primary">Start Shopping</a>
         </div>
     @endif
 </div>

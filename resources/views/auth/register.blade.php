@@ -1,4 +1,6 @@
 <x-guest-layout>
+    <h2 class="text-lg font-bold text-gray-800 mb-4 text-center">Create Account</h2>
+
     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
@@ -22,10 +24,11 @@
             <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" />
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
+
         <!-- Photo -->
         <div class="mt-4">
             <x-input-label for="photo" :value="__('Profile Photo')" />
-            <input id="photo" type="file" name="photo" accept="image/*" class="block mt-1 w-full border rounded px-3 py-2">
+            <input id="photo" type="file" name="photo" accept="image/*" class="block mt-1 w-full text-sm text-gray-600 border border-gray-300 rounded-md px-3 py-2 focus:border-pink-500 focus:ring-pink-500">
             <x-input-error :messages="$errors->get('photo')" class="mt-2" />
         </div>
 
@@ -52,14 +55,16 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
+        <div class="mt-4">
+            <x-primary-button class="w-full justify-center">
                 {{ __('Register') }}
             </x-primary-button>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="text-sm text-gray-600 hover:text-pink-600" href="{{ route('login') }}">
+                {{ __('Already have an account? Login') }}
+            </a>
         </div>
     </form>
 </x-guest-layout>

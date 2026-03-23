@@ -10,18 +10,20 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin',
+        User::updateOrCreate([
             'email' => 'admin@flowershop.com',
+        ], [
+            'name' => 'Admin',
             'password' => Hash::make('password'),
             'role' => 'admin',
             'status' => 'active',
             'email_verified_at' => now(),
         ]);
 
-        User::create([
-            'name' => 'Customer',
+        User::updateOrCreate([
             'email' => 'customer@flowershop.com',
+        ], [
+            'name' => 'Customer',
             'password' => Hash::make('password'),
             'role' => 'customer',
             'status' => 'active',

@@ -29,11 +29,11 @@
             <p style="color: #6b7280; font-size: 14px;">Your order has been received and is being processed. Here are your order details:</p>
 
             <div class="detail"><span>Order Number</span><span>{{ $order->order_number }}</span></div>
-            <div class="detail"><span>Date</span><span>{{ $order->created_at->format('M d, Y') }}</span></div>
+            <div class="detail"><span>Order Date</span><span>{{ $order->created_at->format('M d, Y') }}</span></div>
             <div class="detail"><span>Delivery To</span><span>{{ $order->customer_name }}</span></div>
             <div class="detail"><span>Phone</span><span>{{ $order->customer_phone }}</span></div>
             <div class="detail"><span>Delivery Address</span><span>{{ $order->delivery_address }}</span></div>
-            <div class="detail"><span>Delivery Date</span><span>{{ $order->delivery_date->format('M d, Y') }}</span></div>
+            <div class="detail"><span>Guaranteed to Get By</span><span>{{ ($order->delivery_date ?? $order->created_at->copy()->addDays(5))->format('M d, Y') }}</span></div>
             @if($order->message)
                 <div class="detail"><span>Message</span><span>{{ $order->message }}</span></div>
             @endif

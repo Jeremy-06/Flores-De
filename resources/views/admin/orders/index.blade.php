@@ -2,24 +2,23 @@
 @section('title', 'Manage Orders')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h1 class="text-2xl font-bold mb-6">Manage Orders</h1>
-
-    @if(session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm mb-4">{{ session('success') }}</div>
-    @endif
+<div class="fd-container py-4 md:py-6">
+    <div class="mb-4">
+        <a href="{{ route('admin.dashboard') }}" class="fd-link text-sm font-semibold">&larr; Back to Admin</a>
+    </div>
+    <h1 class="text-3xl font-bold mb-6" style="font-family: 'Playfair Display', serif;">Manage Orders</h1>
 
     <!-- Filters -->
-    <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+    <div class="fd-panel p-4 mb-6">
         <form action="{{ route('admin.orders.index') }}" method="GET" class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
-                <label class="text-xs font-medium text-gray-500 block mb-1">Search</label>
+                <label class="text-xs font-medium text-slate-500 block mb-1">Search</label>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Order # or customer name..."
-                       class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:border-red-500 focus:ring-red-500">
+                       class="fd-input">
             </div>
             <div>
-                <label class="text-xs font-medium text-gray-500 block mb-1">Status</label>
-                <select name="status" class="border border-gray-300 rounded px-3 py-2 text-sm focus:border-red-500 focus:ring-red-500">
+                <label class="text-xs font-medium text-slate-500 block mb-1">Status</label>
+                <select name="status" class="fd-select">
                     <option value="">All</option>
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
@@ -27,47 +26,42 @@
                     <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">Filter</button>
+            <button type="submit" class="fd-btn-primary text-sm">Filter</button>
             @if(request('search') || request('status'))
-                <a href="{{ route('admin.orders.index') }}" class="text-gray-500 text-sm hover:underline py-2">Clear</a>
+                <a href="{{ route('admin.orders.index') }}" class="text-slate-500 text-sm hover:underline py-2">Clear</a>
             @endif
         </form>
     </div>
 
     <!-- Orders Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+    <div class="fd-panel overflow-hidden">
+        <table class="fd-table min-w-full">
+            <thead>
                 <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th>ID</th>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody>
                 @forelse($orders as $order)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-3 text-sm text-gray-500">{{ $order->id }}</td>
-                    <td class="px-4 py-3 text-sm font-medium text-gray-800">{{ $order->order_number }}</td>
-                    <td class="px-4 py-3 text-sm">{{ $order->user->name ?? 'N/A' }}</td>
-                    <td class="px-4 py-3 text-sm font-medium">₱{{ number_format((float) $order->total, 2) }}</td>
-                    <td class="px-4 py-3">
-                        <span class="px-2 py-1 text-xs rounded-full font-medium
-                            @if($order->status === 'delivered') bg-green-100 text-green-700
-                            @elseif($order->status === 'cancelled') bg-red-100 text-red-700
-                            @elseif($order->status === 'processing') bg-blue-100 text-blue-700
-                            @else bg-yellow-100 text-yellow-700
-                            @endif">
+                <tr>
+                    <td class="text-sm text-slate-500">{{ $order->id }}</td>
+                    <td class="text-sm font-medium text-slate-800">{{ $order->order_number }}</td>
+                    <td class="text-sm">{{ $order->user->name ?? 'N/A' }}</td>
+                    <td class="text-sm font-semibold text-orange-700">₱{{ number_format((float) $order->total, 2) }}</td>
+                    <td>
+                        <span class="@if($order->status === 'delivered') fd-status-ok @elseif($order->status === 'cancelled') fd-status-danger @elseif($order->status === 'processing') fd-status-info @else fd-status-warn @endif">
                             {{ ucfirst($order->status) }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-500">{{ $order->created_at->format('M d, Y') }}</td>
-                    <td class="px-4 py-3">
-                        <a href="{{ route('admin.orders.show', $order) }}" class="text-red-600 hover:underline text-sm font-medium">View</a>
+                    <td class="text-sm text-slate-500">{{ $order->created_at->format('M d, Y') }}</td>
+                    <td>
+                        <a href="{{ route('admin.orders.show', $order) }}" class="fd-link hover:underline text-sm font-medium">View</a>
                     </td>
                 </tr>
                 @empty

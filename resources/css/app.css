@@ -1,3 +1,291 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --brand-50: #fff4eb;
+        --brand-100: #ffe9d7;
+        --brand-200: #ffd0af;
+        --brand-300: #ffb082;
+        --brand-400: #ff8a5b;
+        --brand-500: #f2643d;
+        --brand-600: #db4b2d;
+        --brand-700: #b63725;
+        --ink-950: #141416;
+        --ink-800: #2a2b31;
+        --ink-600: #4f5260;
+        --ink-500: #6b7180;
+        --paper-50: #fffdf9;
+        --paper-100: #fff8ef;
+        --line: #efe4d6;
+        --ok: #15803d;
+        --warn: #b45309;
+        --danger: #b91c1c;
+        --radius: 18px;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        color: var(--ink-800);
+        background:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(255, 176, 130, 0.17) 0,
+                rgba(255, 176, 130, 0) 40%
+            ),
+            radial-gradient(
+                circle at 100% 20%,
+                rgba(242, 100, 61, 0.12) 0,
+                rgba(242, 100, 61, 0) 38%
+            ),
+            linear-gradient(180deg, #fffefc 0%, #fff9f3 100%);
+        min-height: 100vh;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--ink-950);
+        letter-spacing: -0.02em;
+    }
+}
+
+@layer components {
+    .fd-shell {
+        @apply relative min-h-screen flex flex-col;
+    }
+
+    .fd-container {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    .fd-panel {
+        @apply bg-white/85 backdrop-blur-sm border shadow-sm;
+        border-color: var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 10px 24px rgba(20, 20, 22, 0.06);
+    }
+
+    .fd-panel-soft {
+        @apply border;
+        border-color: #f3e6d6;
+        background: linear-gradient(180deg, #fffdfa 0%, #fff6ea 100%);
+        border-radius: var(--radius);
+    }
+
+    .fd-hero {
+        @apply relative overflow-hidden text-white;
+        border-radius: 0 0 32px 32px;
+        background:
+            radial-gradient(
+                circle at 18% 8%,
+                rgba(255, 214, 214, 0.18) 0,
+                rgba(255, 214, 214, 0) 34%
+            ),
+            radial-gradient(
+                circle at 88% 100%,
+                rgba(255, 145, 124, 0.26) 0,
+                rgba(255, 145, 124, 0) 44%
+            ),
+            linear-gradient(130deg, #3c1020 0%, #5b1830 48%, #8f2d3f 100%);
+    }
+
+    .fd-hero h1,
+    .fd-hero h2,
+    .fd-hero h3 {
+        color: #fff8f8;
+    }
+
+    .fd-hero p {
+        color: rgba(255, 238, 238, 0.92);
+    }
+
+    .fd-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 font-semibold text-white transition-all duration-200;
+        background: linear-gradient(135deg, #f2643d 0%, #db4b2d 100%);
+        border-radius: 12px;
+        padding: 0.65rem 1.1rem;
+        box-shadow: 0 8px 20px rgba(219, 75, 45, 0.32);
+    }
+
+    .fd-btn-primary:hover {
+        transform: translateY(-1px);
+        filter: saturate(1.08);
+    }
+
+    .fd-btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 font-medium transition;
+        color: var(--ink-700, #3b3e49);
+        border: 1px solid #eadbc9;
+        border-radius: 12px;
+        background: #fffaf3;
+        padding: 0.6rem 1rem;
+    }
+
+    .fd-btn-ghost:hover {
+        background: #fff1df;
+        border-color: #e8c9a2;
+    }
+
+    .fd-chip {
+        @apply inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full;
+        background: #fff1df;
+        color: #a24a21;
+        border: 1px solid #f4d3b1;
+    }
+
+    .fd-input,
+    .fd-select,
+    .fd-textarea {
+        @apply w-full border text-sm transition duration-150;
+        border-color: #e9d9c8;
+        border-radius: 12px;
+        background: #fffcf8;
+        color: #2a2b31;
+    }
+
+    .fd-input,
+    .fd-select {
+        @apply px-3 py-2;
+    }
+
+    .fd-textarea {
+        @apply px-3 py-2.5;
+    }
+
+    .fd-input:focus,
+    .fd-select:focus,
+    .fd-textarea:focus {
+        outline: none;
+        border-color: #f08a5f;
+        box-shadow: 0 0 0 3px rgba(242, 100, 61, 0.16);
+    }
+
+    .fd-table {
+        @apply w-full text-sm;
+    }
+
+    .fd-table thead tr {
+        background: #fff1df;
+    }
+
+    .fd-table th {
+        @apply text-left uppercase tracking-wide;
+        color: #6c4a2f;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .fd-table td,
+    .fd-table th {
+        @apply px-4 py-3;
+        border-bottom: 1px solid #f3e6d6;
+    }
+
+    .fd-table tbody tr:hover {
+        background: #fff8ee;
+    }
+
+    .fd-status-ok {
+        @apply px-2.5 py-1 text-xs font-semibold rounded-full;
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .fd-status-warn {
+        @apply px-2.5 py-1 text-xs font-semibold rounded-full;
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .fd-status-info {
+        @apply px-2.5 py-1 text-xs font-semibold rounded-full;
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .fd-status-danger {
+        @apply px-2.5 py-1 text-xs font-semibold rounded-full;
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .fd-reveal {
+        animation: fd-reveal 0.6s ease-out both;
+    }
+
+    .fd-stagger > * {
+        animation: fd-reveal 0.6s ease-out both;
+    }
+
+    .fd-stagger > *:nth-child(2) {
+        animation-delay: 0.06s;
+    }
+    .fd-stagger > *:nth-child(3) {
+        animation-delay: 0.12s;
+    }
+    .fd-stagger > *:nth-child(4) {
+        animation-delay: 0.18s;
+    }
+    .fd-stagger > *:nth-child(5) {
+        animation-delay: 0.24s;
+    }
+    .fd-stagger > *:nth-child(6) {
+        animation-delay: 0.3s;
+    }
+}
+
+@layer utilities {
+    .fd-link {
+        color: #db4b2d;
+        transition: color 0.2s ease;
+    }
+
+    .fd-link:hover {
+        color: #b63725;
+    }
+}
+
+@keyframes fd-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.pagination .page-link,
+.pagination span,
+.pagination a {
+    border-radius: 10px;
+    border: 1px solid #e8d7c4;
+    background: #fffdf8;
+    color: #6b4d35;
+    font-size: 0.82rem;
+    line-height: 1;
+    padding: 0.55rem 0.7rem;
+}
+
+.pagination .active span,
+.pagination a:hover {
+    background: linear-gradient(135deg, #f2643d 0%, #db4b2d 100%);
+    color: #fff;
+    border-color: transparent;
+}

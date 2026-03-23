@@ -61,6 +61,12 @@ class CategoriesDataTable extends DataTable
             ->minifiedAjax()
             ->orderBy(1)
             ->selectStyleSingle()
+            ->parameters([
+                'processing' => false,
+                'language' => [
+                    'processing' => '',
+                ],
+            ])
             ->buttons([
                 Button::make('excel'),
                 Button::make('csv'),

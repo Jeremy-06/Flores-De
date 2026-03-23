@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Flower;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -17,11 +18,12 @@ class CartController extends Controller
         return view('cart.index', compact('cartItems', 'total'));
     }
 
-    public function add(Request $request): RedirectResponse
+    public function add(Request $request): RedirectResponse|JsonResponse
     {
         $request->validate([
             'flower_id' => 'required|exists:flowers,id',
             'quantity' => 'required|integer|min:1',
+            'redirect_to' => 'nullable|string',
         ]);
 
         $flower = Flower::findOrFail($request->flower_id);
@@ -36,6 +38,19 @@ class CartController extends Controller
                 'slug' => $flower->slug,
             ],
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Added to cart!',
+                'cart_count' => \Cart::getContent()->count(),
+            ]);
+        }
+
+        $redirectTo = $request->string('redirect_to')->toString();
+
+        if (!empty($redirectTo) && str_starts_with($redirectTo, url('/'))) {
+            return redirect()->to($redirectTo)->with('success', 'Added to cart!');
+        }
 
         return redirect()->back()->with('success', 'Added to cart!');
     }

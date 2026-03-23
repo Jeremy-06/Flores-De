@@ -23,7 +23,7 @@
             @if($user->photo)
                 <img src="{{ asset('storage/' . $user->photo) }}" class="w-20 h-20 rounded-full object-cover mt-2">
             @else
-                <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-white mt-2">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+                <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center text-xl font-bold mt-2">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
             @endif
             <input type="file" name="photo" accept="image/*" class="mt-2 block w-full border rounded px-3 py-2 text-sm">
             <x-input-error class="mt-2" :messages="$errors->get('photo')" />
@@ -45,7 +45,7 @@
                     <p class="text-sm mt-2 text-gray-800">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>

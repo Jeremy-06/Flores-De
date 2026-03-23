@@ -33,6 +33,24 @@ class ReviewsDataTable extends DataTable
                             <button type="submit" class="text-red-600 hover:underline text-sm">Delete</button>
                         </form>';
             })
+            ->filterColumn('user_name', function ($query, $keyword) {
+                $query->whereHas('user', function ($userQuery) use ($keyword) {
+                    $userQuery->where('name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('flower_name', function ($query, $keyword) {
+                $query->whereHas('flower', function ($flowerQuery) use ($keyword) {
+                    $flowerQuery->where('name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('date', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(created_at, '%b %d, %Y') like ?", ["%{$keyword}%"]);
+            })
+            ->filterColumn('stars', function ($query, $keyword) {
+                if (is_numeric($keyword)) {
+                    $query->where('rating', (int) $keyword);
+                }
+            })
             ->rawColumns(['stars', 'action'])
             ->setRowId('id');
     }
@@ -49,6 +67,12 @@ class ReviewsDataTable extends DataTable
                     ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(0, 'desc')
+            ->parameters([
+                'processing' => false,
+                'language' => [
+                    'processing' => '',
+                ],
+            ])
             ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),

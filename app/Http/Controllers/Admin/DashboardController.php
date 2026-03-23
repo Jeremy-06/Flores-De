@@ -24,30 +24,30 @@ class DashboardController extends Controller
 
         $recentOrders = Order::with('user')->latest()->take(5)->get();
 
-        // MP7 Chart 1: Monthly Sales (last 12 months)
-        $monthlySales = Order::where('status', 'delivered')
-            ->where('created_at', '>=', now()->subMonths(12))
+        // Chart 1: Yearly Sales (last 5 years)
+        $yearlySales = Order::where('status', 'delivered')
+            ->where('created_at', '>=', now()->subYears(5)->startOfYear())
             ->select(
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
-                DB::raw('SUM(total) as total'),
+                DB::raw('YEAR(created_at) as year'),
+                DB::raw('SUM(total) as total_revenue'),
                 DB::raw('COUNT(*) as count')
             )
-            ->groupBy('month')
-            ->orderBy('month')
+            ->groupBy('year')
+            ->orderBy('year')
             ->get();
 
-        // MP7 Chart 2: Top 10 Products by Sales
+        // Chart 2: Product Sales Contribution (by revenue)
         $productSales = DB::table('order_items')
             ->join('flowers', 'order_items.flower_id', '=', 'flowers.id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.status', 'delivered')
-            ->select('flowers.name', DB::raw('SUM(order_items.quantity) as total_qty'))
+            ->select('flowers.name', DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue'))
             ->groupBy('flowers.name')
-            ->orderByDesc('total_qty')
+            ->orderByDesc('total_revenue')
             ->limit(10)
             ->get();
 
-        // MP7 Chart 3: Date Range Sales (with filter)
+        // Chart 3: Date Range Sales (with filter)
         $startDate = $request->get('start_date', now()->subDays(30)->format('Y-m-d'));
         $endDate = $request->get('end_date', now()->format('Y-m-d'));
 
@@ -63,7 +63,7 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', compact(
             'stats', 'recentOrders',
-            'monthlySales', 'productSales', 'dateRangeSales',
+            'yearlySales', 'productSales', 'dateRangeSales',
             'startDate', 'endDate'
         ));
     }
